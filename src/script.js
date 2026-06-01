@@ -75,23 +75,23 @@ const loadSRGBTexture = (path) => {
 };
 
 // add textures
-const sunTexture = loadSRGBTexture("/textures/sun.jpg");
-const mercuryTexture = loadSRGBTexture("/textures/mercury.jpg");
-const venusTexture = loadSRGBTexture("/textures/venus.jpg");
-const venusAtmosphereTexture = loadSRGBTexture("/textures/venus_atmosphere.jpg");
-const earthTexture = loadSRGBTexture("/textures/earth.jpg");
-const earthCloudsTexture = loadSRGBTexture("/textures/earth_clouds.jpg");
-const earthNightTexture = loadSRGBTexture("/textures/earth_nightmap.jpg");
-const earthNormalTexture = textureLoader.load("/textures/earth_normal_map.png");
-const earthSpecularTexture = textureLoader.load("/textures/earth_specular_map.png");
-const moonTexture = loadSRGBTexture("/textures/moon.jpg");
-const marsTexture = loadSRGBTexture("/textures/mars.jpg");
-const jupiterTexture = loadSRGBTexture("/textures/jupiter.jpg");
-const saturnTexture = loadSRGBTexture("/textures/saturn.jpg");
-const saturnRingTexture = loadSRGBTexture("/textures/saturn_ring_alpha.png");
-const uranusTexture = loadSRGBTexture("/textures/uranus.jpg");
-const neptuneTexture = loadSRGBTexture("/textures/neptune.jpg");
-const plutoTexture = loadSRGBTexture("/textures/pluto.jpg");
+const sunTexture = loadSRGBTexture("./textures/sun.jpg");
+const mercuryTexture = loadSRGBTexture("./textures/mercury.jpg");
+const venusTexture = loadSRGBTexture("./textures/venus.jpg");
+const venusAtmosphereTexture = loadSRGBTexture("./textures/venus_atmosphere.jpg");
+const earthTexture = loadSRGBTexture("./textures/earth.jpg");
+const earthCloudsTexture = loadSRGBTexture("./textures/earth_clouds.jpg");
+const earthNightTexture = loadSRGBTexture("./textures/earth_nightmap.jpg");
+const earthNormalTexture = textureLoader.load("./textures/earth_normal_map.png");
+const earthSpecularTexture = textureLoader.load("./textures/earth_specular_map.png");
+const moonTexture = loadSRGBTexture("./textures/moon.jpg");
+const marsTexture = loadSRGBTexture("./textures/mars.jpg");
+const jupiterTexture = loadSRGBTexture("./textures/jupiter.jpg");
+const saturnTexture = loadSRGBTexture("./textures/saturn.jpg");
+const saturnRingTexture = loadSRGBTexture("./textures/saturn_ring_alpha.png");
+const uranusTexture = loadSRGBTexture("./textures/uranus.jpg");
+const neptuneTexture = loadSRGBTexture("./textures/neptune.jpg");
+const plutoTexture = loadSRGBTexture("./textures/pluto.jpg");
 
 // add planets
 const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -241,12 +241,12 @@ const plutoMaterial = new THREE.MeshStandardMaterial({map: plutoTexture});
 const skyboxGeometry = new THREE.BoxGeometry(400, 400, 400);
 
 const skyboxMaterials = [
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("/textures/cubeMap/px.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("/textures/cubeMap/nx.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("/textures/cubeMap/py.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("/textures/cubeMap/ny.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("/textures/cubeMap/pz.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("/textures/cubeMap/nz.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/px.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/nx.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/py.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/ny.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/pz.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/nz.png"), side: THREE.BackSide }),
 ];
 
 const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);

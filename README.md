@@ -2,6 +2,8 @@
 
 An interactive Three.js solar system scene built with Vite. The project started as a course exercise and grew into a more complete visual exploration of planetary motion, texture mapping, lighting, UI controls, and scene organization.
 
+Live preview: [austinwells.dev/projects/threejs-solar-system](https://austinwells.dev/projects/threejs-solar-system/)
+
 ## Learning Source
 
 I learned the foundation for this project from Zero To Mastery's Three.js course, taught by Jesse Zhou.
