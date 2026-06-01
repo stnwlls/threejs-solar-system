@@ -114,6 +114,8 @@
 - Replaced the starter README with a detailed project README covering the Zero To Mastery course source, base work completed before AI assistance, OpenCode/Codex GPT-5.5 enhancements, credits, controls, and local setup instructions.
 - Updated `package.json` project name to `threejs-solar-system`.
 - Added the unused raw `Textures/` staging folder to `.gitignore`.
+- Created the public GitHub repository `stnwlls/threejs-solar-system` and pushed the initial source commit.
+- Added the solar system project to the local `stnwlls.github.io` portfolio data with a custom SVG thumbnail and GitHub source link.
 
 ## Verification
 
