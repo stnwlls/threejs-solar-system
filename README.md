@@ -60,6 +60,24 @@ AI assistance helped with:
 - Styling the interface with Orbitron, Kode Mono, and Material Symbols
 - Writing and organizing project documentation
 
+## Update - June 3, 2026
+
+### Planet Chooser And Follow Controls
+
+Changes I made:
+
+- Created the new `planet-chooser.js` file
+- Added the planet chooser canvas to the page
+- Built the initial row of selectable planets in the chooser
+
+AI-assisted polish:
+
+- Added hover effects, glow styling, and click interactions for the chooser
+- Connected planet selection to the main camera follow behavior
+- Added the animated `Follow a planet` panel and close behavior
+- Helped coordinate the chooser with the info modal and pause controls
+- Refined UI styling, link behavior, camera positioning, and small layout details
+
 ## Controls
 
 - Scroll to zoom

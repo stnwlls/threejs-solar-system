@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { APP_PAUSE_CHANGED_EVENT, createPlanetCameraFollower } from "./planet-interactions.js";
 
 // initialize the scene
 const scene = new THREE.Scene();
@@ -7,8 +8,13 @@ const pauseButton = document.querySelector(".pause-button");
 const pauseButtonIcon = document.querySelector(".pause-button__icon");
 const infoButton = document.querySelector(".info-button");
 const infoModal = document.querySelector(".info-modal");
+const infoPanel = document.querySelector(".info-panel");
 const infoCloseButton = document.querySelector(".info-panel__close");
+const chooserToggleButton = document.querySelector(".planet-chooser-toggle");
+const chooserPanel = document.querySelector(".planet-chooser-panel");
 const INFO_PANEL_TRANSITION_MS = 540;
+const APP_PANEL_OPENING_EVENT = "app-panel-opening";
+const INFO_PANEL_NAME = "info";
 let isPaused = false;
 let infoCloseTimeout;
 let infoContentTimeout;
@@ -18,11 +24,17 @@ pauseButton.addEventListener("click", () => {
   pauseButton.setAttribute("aria-label", isPaused ? "Resume animation" : "Pause animation");
   pauseButton.setAttribute("aria-pressed", isPaused);
   pauseButtonIcon.textContent = isPaused ? "play_arrow" : "pause";
+  window.dispatchEvent(new CustomEvent(APP_PAUSE_CHANGED_EVENT, {
+    detail: { isPaused },
+  }));
 });
 
 const openInfoModal = () => {
   window.clearTimeout(infoCloseTimeout);
   window.clearTimeout(infoContentTimeout);
+  window.dispatchEvent(new CustomEvent(APP_PANEL_OPENING_EVENT, {
+    detail: { panel: INFO_PANEL_NAME },
+  }));
   infoButton.classList.add("is-hidden");
   infoModal.hidden = false;
   infoModal.classList.remove("is-closing", "is-content-hiding", "is-content-visible");
@@ -36,7 +48,11 @@ const openInfoModal = () => {
   });
 };
 
-const closeInfoModal = () => {
+const closeInfoModal = ({ restoreFocus = true } = {}) => {
+  if (infoModal.hidden) {
+    return;
+  }
+
   window.clearTimeout(infoCloseTimeout);
   window.clearTimeout(infoContentTimeout);
   infoModal.classList.add("is-closing", "is-content-hiding");
@@ -46,15 +62,37 @@ const closeInfoModal = () => {
     infoModal.hidden = true;
     infoModal.classList.remove("is-closing", "is-content-hiding");
     infoButton.classList.remove("is-hidden");
-    infoButton.focus();
+
+    if (restoreFocus) {
+      infoButton.focus();
+    }
   }, INFO_PANEL_TRANSITION_MS);
 };
 
 infoButton.addEventListener("click", openInfoModal);
 infoCloseButton.addEventListener("click", closeInfoModal);
 
-infoModal.addEventListener("click", (event) => {
+window.addEventListener(APP_PANEL_OPENING_EVENT, (event) => {
+  if (event.detail.panel !== INFO_PANEL_NAME) {
+    closeInfoModal({ restoreFocus: false });
+  }
+});
+
+infoModal.addEventListener("mousedown", (event) => {
   if (event.target === infoModal) {
+    closeInfoModal();
+  }
+});
+
+window.addEventListener("mousedown", (event) => {
+  if (
+    !infoModal.hidden &&
+    !infoPanel.contains(event.target) &&
+    !infoButton.contains(event.target) &&
+    !chooserPanel.contains(event.target) &&
+    !chooserToggleButton.contains(event.target) &&
+    !pauseButton.contains(event.target)
+  ) {
     closeInfoModal();
   }
 });
@@ -71,6 +109,13 @@ const textureLoader = new THREE.TextureLoader();
 const loadSRGBTexture = (path) => {
   const texture = textureLoader.load(path);
   texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+};
+
+const loadSkyboxTexture = (path) => {
+  const texture = loadSRGBTexture(path);
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
   return texture;
 };
 
@@ -241,12 +286,12 @@ const plutoMaterial = new THREE.MeshStandardMaterial({map: plutoTexture});
 const skyboxGeometry = new THREE.BoxGeometry(400, 400, 400);
 
 const skyboxMaterials = [
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/px.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/nx.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/py.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/ny.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/pz.png"), side: THREE.BackSide }),
-  new THREE.MeshBasicMaterial({ map: loadSRGBTexture("./textures/cubeMap/nz.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSkyboxTexture("./textures/cubeMap/px.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSkyboxTexture("./textures/cubeMap/nx.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSkyboxTexture("./textures/cubeMap/py.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSkyboxTexture("./textures/cubeMap/ny.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSkyboxTexture("./textures/cubeMap/pz.png"), side: THREE.BackSide }),
+  new THREE.MeshBasicMaterial({ map: loadSkyboxTexture("./textures/cubeMap/nz.png"), side: THREE.BackSide }),
 ];
 
 const skybox = new THREE.Mesh(skyboxGeometry, skyboxMaterials);
@@ -478,7 +523,7 @@ const planetSystems = planets.map(planet => {
 scene.add(sun);
 
 // initialize the light
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.35);
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.55);
 scene.add(ambientLight);
 
 const pointLight = new THREE.PointLight(0xffffff, 2);
@@ -506,6 +551,8 @@ const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 controls.maxDistance = 200;
 controls.minDistance = 6;
+
+const planetCameraFollower = createPlanetCameraFollower({ camera, controls, sun, planetSystems, planets });
 
 // add resize listener
 window.addEventListener("resize", () => {
@@ -546,6 +593,7 @@ const renderloop = () => {
     });
   }
   
+  planetCameraFollower.update();
   controls.update();
   renderer.render(scene, camera);
   window.requestAnimationFrame(renderloop);
