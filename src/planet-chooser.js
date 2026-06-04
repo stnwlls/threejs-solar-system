@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { createAssetLoadingManager } from "./loading-screen.js";
 import { APP_PAUSE_CHANGED_EVENT, setupPlanetChooserInteractions } from "./planet-interactions.js";
 
 const sizes = {
@@ -108,7 +109,7 @@ const scene = new THREE.Scene();
 scene.background = null;
 
 // add textureLoader
-const textureLoader = new THREE.TextureLoader();
+const textureLoader = new THREE.TextureLoader(createAssetLoadingManager("planet-chooser"));
 
 const loadSRGBTexture = (path) => {
   const texture = textureLoader.load(path);
@@ -326,6 +327,8 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setClearColor( 0x000000, 0 ); 
 
 setupPlanetChooserInteractions({ canvas, camera, sun, planetSystems, planets });
+const clock = new THREE.Clock();
+const MAX_ANIMATION_DELTA = 0.1;
 
 // add resize listener
 window.addEventListener("resize", () => {
@@ -335,16 +338,19 @@ window.addEventListener("resize", () => {
 
 // render loop
 const renderloop = () => {
+  const deltaTime = Math.min(clock.getDelta(), MAX_ANIMATION_DELTA);
+  const frameTimeScale = deltaTime * 60;
+
   if (!isPaused) {
-    sun.rotation.y += 0.0012;
+    sun.rotation.y += 0.0012 * frameTimeScale;
 
     planetSystems.forEach(({ system, mesh, rings }, planetIndex) => {
       const planet = planets[planetIndex];
 
-      mesh.rotation.y += planet.rotationSpeed;
+      mesh.rotation.y += planet.rotationSpeed * frameTimeScale;
 
       rings.forEach(({ mesh: ringMesh, data: ring }) => {
-        ringMesh.rotation.z += ring.rotationSpeed;
+        ringMesh.rotation.z += ring.rotationSpeed * frameTimeScale;
       });
     });
   }

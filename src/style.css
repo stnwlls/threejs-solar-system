@@ -9,9 +9,97 @@
 body {
   margin: 0;
   overflow: hidden;
+  background: #000000;
   font-family: "Kode Mono", monospace;
   font-optical-sizing: auto;
   font-style: normal;
+}
+
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: #000000;
+  opacity: 1;
+  transition: opacity 700ms ease;
+}
+
+.loading-screen.is-loaded {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading-screen[hidden] {
+  display: none;
+}
+
+.loading-screen__text {
+  font-family: "Orbitron", sans-serif;
+  font-size: clamp(14px, 3vw, 22px);
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.loading-screen__dots {
+  display: inline-grid;
+  grid-template-columns: repeat(3, 1ch);
+  width: 3ch;
+}
+
+.loading-screen__dots span {
+  opacity: 0;
+}
+
+.loading-screen__dots span:nth-child(1) {
+  animation: loading-dot-one 1.2s steps(1, end) infinite;
+}
+
+.loading-screen__dots span:nth-child(2) {
+  animation: loading-dot-two 1.2s steps(1, end) infinite;
+}
+
+.loading-screen__dots span:nth-child(3) {
+  animation: loading-dot-three 1.2s steps(1, end) infinite;
+}
+
+@keyframes loading-dot-one {
+  0%,
+  24.999% {
+    opacity: 0;
+  }
+
+  25%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes loading-dot-two {
+  0%,
+  49.999% {
+    opacity: 0;
+  }
+
+  50%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes loading-dot-three {
+  0%,
+  74.999% {
+    opacity: 0;
+  }
+
+  75%,
+  100% {
+    opacity: 1;
+  }
 }
 
 h1,

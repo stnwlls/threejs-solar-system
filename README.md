@@ -78,6 +78,17 @@ AI-assisted polish:
 - Helped coordinate the chooser with the info modal and pause controls
 - Refined UI styling, link behavior, camera positioning, and small layout details
 
+### Loading Screen And Frame-Rate Consistency
+
+Changes I made:
+
+- Added a black loading screen with animated `Loading...` dots
+- Kept the loading screen visible for at least two seconds before it can fade out
+- Connected the loading screen to the page, font, main scene texture, and planet chooser texture loading state
+- Added a fade transition from the loading screen into the fully loaded scene
+- Updated the animation loops to use elapsed time so higher refresh-rate monitors do not make the solar system run faster
+- Capped animation delta time to avoid large jumps after browser tab pauses or slow frames
+
 ## Controls
 
 - Scroll to zoom

@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { createAssetLoadingManager } from "./loading-screen.js";
 import { APP_PAUSE_CHANGED_EVENT, createPlanetCameraFollower } from "./planet-interactions.js";
 
 // initialize the scene
@@ -104,7 +105,7 @@ window.addEventListener("keydown", (event) => {
 });
 
 // add textureLoader
-const textureLoader = new THREE.TextureLoader();
+const textureLoader = new THREE.TextureLoader(createAssetLoadingManager("main-scene"));
 
 const loadSRGBTexture = (path) => {
   const texture = textureLoader.load(path);
@@ -553,6 +554,8 @@ controls.maxDistance = 200;
 controls.minDistance = 6;
 
 const planetCameraFollower = createPlanetCameraFollower({ camera, controls, sun, planetSystems, planets });
+const clock = new THREE.Clock();
+const MAX_ANIMATION_DELTA = 0.1;
 
 // add resize listener
 window.addEventListener("resize", () => {
@@ -563,38 +566,41 @@ window.addEventListener("resize", () => {
 
 // render loop
 const renderloop = () => {
+  const deltaTime = Math.min(clock.getDelta(), MAX_ANIMATION_DELTA);
+  const frameTimeScale = deltaTime * 60;
+
   if (!isPaused) {
-    sun.rotation.y += 0.0012;
+    sun.rotation.y += 0.0012 * frameTimeScale;
 
     planetSystems.forEach(({ system, mesh, clouds, rings, moons }, planetIndex) => {
       const planet = planets[planetIndex];
 
-      planet.orbitAngle = (planet.orbitAngle ?? Math.PI / 2) + planet.speed * 0.65;
+      planet.orbitAngle = (planet.orbitAngle ?? Math.PI / 2) + planet.speed * 0.65 * frameTimeScale;
       system.position.x = Math.sin(planet.orbitAngle) * planet.distance;
       system.position.z = Math.cos(planet.orbitAngle) * planet.distance;
-      mesh.rotation.y += planet.rotationSpeed;
+      mesh.rotation.y += planet.rotationSpeed * frameTimeScale;
 
       if (clouds) {
-        clouds.rotation.y += planet.clouds.rotationSpeed;
+        clouds.rotation.y += planet.clouds.rotationSpeed * frameTimeScale;
       }
 
       rings.forEach(({ mesh: ringMesh, data: ring }) => {
-        ringMesh.rotation.z += ring.rotationSpeed;
+        ringMesh.rotation.z += ring.rotationSpeed * frameTimeScale;
       });
 
       moons.forEach((moonMesh, moonIndex) => {
         const moon = planet.moons[moonIndex];
 
-        moon.orbitAngle = (moon.orbitAngle ?? Math.PI / 2) + moon.speed * 0.65;
+        moon.orbitAngle = (moon.orbitAngle ?? Math.PI / 2) + moon.speed * 0.65 * frameTimeScale;
         moonMesh.position.x = Math.sin(moon.orbitAngle) * moon.distance;
         moonMesh.position.z = Math.cos(moon.orbitAngle) * moon.distance;
-        moonMesh.rotation.y += moon.rotationSpeed * 0.65;
+        moonMesh.rotation.y += moon.rotationSpeed * 0.65 * frameTimeScale;
       });
     });
   }
   
   planetCameraFollower.update();
-  controls.update();
+  controls.update(deltaTime);
   renderer.render(scene, camera);
   window.requestAnimationFrame(renderloop);
 };
